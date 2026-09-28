@@ -12,6 +12,10 @@
 
 **Repository:** https://github.com/gopibattineni/SYNTH_FRAMEWORK_NEW
 
+**Live dashboards:**
+- [Interactive Results Dashboard](https://gopibattineni.github.io/SYNTH_FRAMEWORK_NEW/)
+- [10-Seed Results Explorer](https://gopibattineni.github.io/SYNTH_FRAMEWORK_NEW/explorer/)
+
 ---
 
 ## Highlights
@@ -135,18 +139,18 @@ Open http://127.0.0.1:8000
 
 ## Dashboard (GitHub Pages)
 
-Static Plotly dashboard built from the merged 10-seed Excel:
+| Site | URL |
+|------|-----|
+| **Interactive Results Dashboard** | https://gopibattineni.github.io/SYNTH_FRAMEWORK_NEW/ |
+| **10-Seed Results Explorer** | https://gopibattineni.github.io/SYNTH_FRAMEWORK_NEW/explorer/ |
+
+Static Plotly dashboards built from the merged 10-seed Excel. Rebuild locally:
 
 ```bash
 python dashboard/build_pages.py
 ```
 
-Output lands in `docs/` (committed for Pages). After enabling **Settings → Pages → Deploy from branch → `main` / `/docs`**:
-
-- Dashboard: `https://gopibattineni.github.io/SYNTH_FRAMEWORK_NEW/`
-- 10-Seed Explorer: `https://gopibattineni.github.io/SYNTH_FRAMEWORK_NEW/explorer/`
-
-CI rebuild: `.github/workflows/deploy-pages.yml`
+Output lands in `docs/`. CI rebuild: `.github/workflows/deploy-pages.yml`
 
 ---
 
