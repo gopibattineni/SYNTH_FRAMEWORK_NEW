@@ -114,7 +114,7 @@ def load_and_split(
     SPLITS_DIR = paths["splits"]
     SPLITS_DIR.mkdir(parents=True, exist_ok=True)
     # bump cache key when label/impute logic changes
-    cache_key = f"{cfg['id']}__split{split_seed}__ts{test_size}__v4_no_datetime.pkl"
+    cache_key = f"{cfg['id']}__split{split_seed}__ts{test_size}__v5_uniform1000.pkl"
     cache_path = SPLITS_DIR / cache_key
     meta_path = SPLITS_DIR / cache_key.replace(".pkl", ".json")
 
