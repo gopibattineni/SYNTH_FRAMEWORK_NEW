@@ -27,7 +27,7 @@ TRTR_METRICS_REG = ("R2_TRTR", "RMSE_TRTR", "MAE_TRTR")
 
 
 def _mean_sd_text(mean: float, finite: np.ndarray) -> tuple[float, str]:
-    """Sample SD (ddof=1) across generator seeds. Identical seeds are shown as ± 0."""
+    """Sample SD from available seed values. Never emit ±0."""
     n = int(len(finite))
     if n == 0 or not np.isfinite(mean):
         return np.nan, ""
@@ -35,7 +35,8 @@ def _mean_sd_text(mean: float, finite: np.ndarray) -> tuple[float, str]:
         return np.nan, f"{mean:.6g}"
     sd = float(np.std(finite, ddof=1))
     if not np.isfinite(sd) or sd <= SD_EPS:
-        return 0.0, f"{mean:.6g} ± 0"
+        # Identical seeds → no generator variance; leave blank until model-seed fill.
+        return np.nan, f"{mean:.6g}"
     return sd, f"{mean:.6g} ± {sd:.6g}"
 
 
@@ -340,26 +341,28 @@ def _fill_tstr_and_gap_sd(out: pd.DataFrame, task: str) -> pd.DataFrame:
 
 
 def _sanitize_zero_sd(out: pd.DataFrame) -> pd.DataFrame:
-    """Keep a visible SD for every row that has at least two seed values, including ± 0."""
+    """Guarantee no stored/displayed SD is exactly zero (use NaN + mean-only text)."""
     if out.empty:
         return out
     for idx, row in out.iterrows():
-        mean = row.get("mean")
-        n = row.get("n_seeds")
-        try:
-            n = int(n)
-        except (TypeError, ValueError):
-            n = 0
-        if n < 2 or not np.isfinite(mean):
-            continue
         sd = row.get("sd")
+        mean = row.get("mean")
         mean_sd = str(row.get("mean_sd") or "")
-        if "±" in mean_sd and not _is_zero_sd(sd):
+        zeroish = _is_zero_sd(sd)
+        if "±" in mean_sd:
+            try:
+                right = mean_sd.split("±", 1)[1].strip().split()[0]
+                if float(right) <= SD_EPS:
+                    zeroish = True
+            except Exception:
+                pass
+        if not zeroish:
             continue
-        if _is_zero_sd(sd) or not (isinstance(sd, (int, float)) and np.isfinite(sd)) or "±" not in mean_sd:
-            if _is_zero_sd(sd) or sd is None or (isinstance(sd, float) and not np.isfinite(sd)):
-                out.at[idx, "sd"] = 0.0
-                out.at[idx, "mean_sd"] = f"{float(mean):.6g} ± 0"
+        out.at[idx, "sd"] = np.nan
+        if np.isfinite(mean):
+            out.at[idx, "mean_sd"] = f"{float(mean):.6g}"
+        else:
+            out.at[idx, "mean_sd"] = ""
     return out
 
 

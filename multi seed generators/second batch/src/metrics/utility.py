@@ -98,6 +98,13 @@ def evaluate_classification(
 
     buckets = {"Accuracy": [], "F1": [], "Precision": [], "Recall": [], "ROC_AUC": []}
     n_classes = len(np.unique(y_tr_e))
+    # Generator collapse / tiny N can yield a single-class synthetic train set.
+    # Record NaN utility rather than failing the whole run.
+    if n_classes < 2:
+        nan_m = {k: float("nan") for k in buckets}
+        if return_sd:
+            return nan_m, {k: float("nan") for k in buckets}
+        return nan_m
     for name, model in models.items():
         for seed in classifier_seeds:
             clf = clone(model)
