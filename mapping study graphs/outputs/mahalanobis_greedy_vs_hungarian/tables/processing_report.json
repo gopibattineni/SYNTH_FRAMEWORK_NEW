@@ -1,6 +1,6 @@
 {
-  "source_primary": "C:\\Users\\Gopi.Battineni\\OneDrive - University of Limerick\\Desktop\\SYNTH\\SYNTH_FRAMEWORK\\mapping study graphs\\extracted_results\\hungarian_vs_greedy_summary.csv",
-  "source_secondary": "C:\\Users\\Gopi.Battineni\\OneDrive - University of Limerick\\Desktop\\SYNTH\\SYNTH_FRAMEWORK\\mapping study graphs\\extracted_results\\mahalanobis_distance_results.csv",
+  "source_primary": "/home/gopi_b/SYNTH_FRAMEWORK_NEW/mapping study graphs/extracted_results/hungarian_vs_greedy_summary.csv",
+  "source_secondary": "/home/gopi_b/SYNTH_FRAMEWORK_NEW/mapping study graphs/extracted_results/mahalanobis_distance_results.csv",
   "processed": [
     {
       "dataset": "Cancer",
@@ -132,6 +132,22 @@
     },
     {
       "dataset": "Bank",
+      "generator": "CTGAN"
+    },
+    {
+      "dataset": "Bank",
+      "generator": "CopulaGAN"
+    },
+    {
+      "dataset": "Bank",
+      "generator": "TVAE"
+    },
+    {
+      "dataset": "Bank",
+      "generator": "GaussianCopula"
+    },
+    {
+      "dataset": "Bank",
       "generator": "CTABGAN"
     },
     {
@@ -148,6 +164,22 @@
     },
     {
       "dataset": "Wine",
+      "generator": "CTGAN"
+    },
+    {
+      "dataset": "Wine",
+      "generator": "CopulaGAN"
+    },
+    {
+      "dataset": "Wine",
+      "generator": "TVAE"
+    },
+    {
+      "dataset": "Wine",
+      "generator": "GaussianCopula"
+    },
+    {
+      "dataset": "Wine",
       "generator": "CTABGAN"
     },
     {
@@ -292,6 +324,22 @@
     },
     {
       "dataset": "OnlineShop",
+      "generator": "CTGAN"
+    },
+    {
+      "dataset": "OnlineShop",
+      "generator": "CopulaGAN"
+    },
+    {
+      "dataset": "OnlineShop",
+      "generator": "TVAE"
+    },
+    {
+      "dataset": "OnlineShop",
+      "generator": "GaussianCopula"
+    },
+    {
+      "dataset": "OnlineShop",
       "generator": "CTABGAN"
     },
     {
@@ -305,6 +353,14 @@
     {
       "dataset": "OnlineShop",
       "generator": "ForestDiffusion"
+    },
+    {
+      "dataset": "AirQuality",
+      "generator": "CTGAN"
+    },
+    {
+      "dataset": "AirQuality",
+      "generator": "CopulaGAN"
     },
     {
       "dataset": "AirQuality",
@@ -427,84 +483,13 @@
       "generator": "ForestDiffusion"
     }
   ],
-  "skipped": [
-    {
-      "dataset": "Bank",
-      "generator": "CTGAN",
-      "reason": "missing Greedy and/or Hungarian Mahalanobis mean in extracted summary"
-    },
-    {
-      "dataset": "Bank",
-      "generator": "CopulaGAN",
-      "reason": "missing Greedy and/or Hungarian Mahalanobis mean in extracted summary"
-    },
-    {
-      "dataset": "Bank",
-      "generator": "TVAE",
-      "reason": "missing Greedy and/or Hungarian Mahalanobis mean in extracted summary"
-    },
-    {
-      "dataset": "Bank",
-      "generator": "GaussianCopula",
-      "reason": "missing Greedy and/or Hungarian Mahalanobis mean in extracted summary"
-    },
-    {
-      "dataset": "Wine",
-      "generator": "CTGAN",
-      "reason": "incomplete Mahalanobis methods available: ['Hungarian']"
-    },
-    {
-      "dataset": "Wine",
-      "generator": "CopulaGAN",
-      "reason": "incomplete Mahalanobis methods available: ['Hungarian']"
-    },
-    {
-      "dataset": "Wine",
-      "generator": "TVAE",
-      "reason": "incomplete Mahalanobis methods available: ['Hungarian']"
-    },
-    {
-      "dataset": "Wine",
-      "generator": "GaussianCopula",
-      "reason": "incomplete Mahalanobis methods available: ['Hungarian']"
-    },
-    {
-      "dataset": "OnlineShop",
-      "generator": "CTGAN",
-      "reason": "incomplete Mahalanobis methods available: ['Hungarian']"
-    },
-    {
-      "dataset": "OnlineShop",
-      "generator": "CopulaGAN",
-      "reason": "incomplete Mahalanobis methods available: ['Hungarian']"
-    },
-    {
-      "dataset": "OnlineShop",
-      "generator": "TVAE",
-      "reason": "incomplete Mahalanobis methods available: ['Hungarian']"
-    },
-    {
-      "dataset": "OnlineShop",
-      "generator": "GaussianCopula",
-      "reason": "incomplete Mahalanobis methods available: ['Hungarian']"
-    },
-    {
-      "dataset": "AirQuality",
-      "generator": "CTGAN",
-      "reason": "incomplete Mahalanobis methods available: ['Hungarian']"
-    },
-    {
-      "dataset": "AirQuality",
-      "generator": "CopulaGAN",
-      "reason": "incomplete Mahalanobis methods available: ['Hungarian']"
-    }
-  ],
+  "skipped": [],
   "notes": [
     "No runtime/compute-cost fields found in extracted mapping results; runtime figures skipped.",
     "No assignment-level pair identity matrices found; agreement figure skipped."
   ],
-  "n_paired": 106,
-  "n_skipped": 14,
+  "n_paired": 120,
+  "n_skipped": 0,
   "datasets": [
     "Adult",
     "AirQuality",

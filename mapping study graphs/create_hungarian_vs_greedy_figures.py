@@ -178,6 +178,167 @@ def _guess_ds_from_name(path: Path) -> str | None:
     return None
 
 
+def _plausible_maha_pair(greedy: float, hung: float) -> bool:
+    """Reject overflow / mis-parsed notebook table cells."""
+    if greedy is None or hung is None:
+        return False
+    if np.isnan(greedy) or np.isnan(hung):
+        return False
+    if greedy <= 0 or hung <= 0:
+        return False
+    if greedy > 1e5 or hung > 1e5:
+        return False
+    if hung > 0 and greedy / hung > 250:
+        return False
+    return True
+
+
+def _clean_html_cell(text: str) -> str:
+    text = re.sub(r"<[^>]+>", "", text)
+    text = text.replace("&nbsp;", " ").strip()
+    if text.lower() in {"", "nan", "none"}:
+        return ""
+    return text
+
+
+def _parse_html_table(table_html: str) -> tuple[list[str], list[list[str]]]:
+    """Return (headers, body_rows) from one pandas-style HTML table."""
+    headers: list[str] = []
+    rows: list[list[str]] = []
+    for tr in re.findall(r"<tr[^>]*>(.*?)</tr>", table_html, flags=re.S | re.I):
+        cells = [
+            _clean_html_cell(c)
+            for c in re.findall(r"<t[hd][^>]*>(.*?)</t[hd]>", tr, flags=re.S | re.I)
+        ]
+        if not cells:
+            continue
+        joined = " ".join(cells).lower()
+        if any(k in joined for k in ("greedy mean", "hungarian mean", "greedy total")):
+            headers = cells
+            continue
+        if "model" in joined and "mean" in joined:
+            headers = cells
+            continue
+        if headers and joined.replace("model", "").strip() == "":
+            # pandas often adds a second header row containing only "Model"
+            continue
+        if headers:
+            rows.append(cells)
+    return headers, rows
+
+
+def _col_idx(headers: list[str], *names: str) -> int | None:
+    lowered = [h.lower() for h in headers]
+    for name in names:
+        name_l = name.lower()
+        for i, h in enumerate(lowered):
+            if name_l in h:
+                return i
+    return None
+
+
+def _extract_sdv_comparison_from_html(
+    html: str, ds: str, nb_name: str
+) -> list[dict]:
+    """Parse SDV notebooks' comparison_df HTML (sampled greedy vs full Hungarian)."""
+    out: list[dict] = []
+    for table_html in re.findall(r"<table[^>]*>.*?</table>", html, flags=re.S | re.I):
+        headers, body = _parse_html_table(table_html)
+        if not headers or not body:
+            continue
+        g_idx = _col_idx(headers, "greedy mean (sampled)", "greedy mean")
+        h_idx = _col_idx(headers, "hungarian mean (full)", "hungarian mean")
+        if g_idx is None or h_idx is None:
+            continue
+        model_idx = 0
+        for row in body:
+            if len(row) <= max(g_idx, h_idx):
+                continue
+            gen = norm_gen(row[model_idx])
+            if gen not in VALID_GENS:
+                continue
+            try:
+                gv = float(row[g_idx])
+                hv = float(row[h_idx])
+            except ValueError:
+                continue
+            if not _plausible_maha_pair(gv, hv):
+                continue
+            out.append(
+                {
+                    "Dataset": ds,
+                    "Generator": gen,
+                    "Greedy_Mahalanobis": gv,
+                    "Hungarian_Mahalanobis": hv,
+                    "nb_src": nb_name,
+                    "nb_kind": "sdv_html_table",
+                }
+            )
+    return out
+
+
+def _extract_split_greedy_hungarian_html(
+    html_blocks: list[str], ds: str, nb_name: str
+) -> list[dict]:
+    """Parse notebooks that print Greedy Mean and Hungarian Mean in separate tables."""
+    greedy_map: dict[str, float] = {}
+    hung_map: dict[str, float] = {}
+    for html in html_blocks:
+        for table_html in re.findall(r"<table[^>]*>.*?</table>", html, flags=re.S | re.I):
+            headers, body = _parse_html_table(table_html)
+            if not headers or not body:
+                continue
+            model_idx = _col_idx(headers, "model")
+            if model_idx is None:
+                model_idx = 0
+            header_joined = " ".join(headers).lower()
+            g_idx = _col_idx(headers, "greedy mean")
+            h_idx = _col_idx(headers, "mean")
+            if g_idx is not None and "greedy mean" in header_joined:
+                for row in body:
+                    if len(row) <= max(model_idx, g_idx):
+                        continue
+                    gen = norm_gen(row[model_idx])
+                    if gen not in VALID_GENS:
+                        continue
+                    try:
+                        greedy_map[gen] = float(row[g_idx])
+                    except ValueError:
+                        continue
+            elif (
+                h_idx is not None
+                and "greedy" not in header_joined
+                and "median" in header_joined
+                and "std" in header_joined
+            ):
+                for row in body:
+                    if len(row) <= max(model_idx, h_idx):
+                        continue
+                    gen = norm_gen(row[model_idx])
+                    if gen not in VALID_GENS:
+                        continue
+                    try:
+                        hung_map[gen] = float(row[h_idx])
+                    except ValueError:
+                        continue
+    out: list[dict] = []
+    for gen in sorted(set(greedy_map) & set(hung_map)):
+        gv, hv = greedy_map[gen], hung_map[gen]
+        if not _plausible_maha_pair(gv, hv):
+            continue
+        out.append(
+            {
+                "Dataset": ds,
+                "Generator": gen,
+                "Greedy_Mahalanobis": gv,
+                "Hungarian_Mahalanobis": hv,
+                "nb_src": nb_name,
+                "nb_kind": "split_html_table",
+            }
+        )
+    return out
+
+
 def extract_notebook_maha_pairs() -> pd.DataFrame:
     """Extract existing Greedy vs Hungarian Mahalanobis means from notebook outputs."""
     pair_re = re.compile(
@@ -215,14 +376,21 @@ def extract_notebook_maha_pairs() -> pd.DataFrame:
         except Exception:
             continue
         texts: list[str] = []
+        html_blocks: list[str] = []
         for cell in data.get("cells", []):
             for out in cell.get("outputs") or []:
                 if out.get("output_type") == "stream":
                     texts.append("".join(out.get("text", [])))
                 elif out.get("output_type") in ("execute_result", "display_data"):
-                    t = out.get("data", {}).get("text/plain")
+                    payload = out.get("data", {}) or {}
+                    t = payload.get("text/plain")
                     if t:
                         texts.append("".join(t) if isinstance(t, list) else t)
+                    h = payload.get("text/html")
+                    if h:
+                        html_blocks.append("".join(h) if isinstance(h, list) else h)
+        rows.extend(_extract_sdv_comparison_from_html("\n".join(html_blocks), ds, nb.name))
+        rows.extend(_extract_split_greedy_hungarian_html(html_blocks, ds, nb.name))
         blob = "\n".join(texts)
         for m in pair_re.finditer(blob):
             g = norm_gen(m.group(1))
@@ -280,10 +448,7 @@ def extract_notebook_maha_pairs() -> pd.DataFrame:
                     if g not in VALID_GENS:
                         continue
                     gv, hv = greedy_map[g], hung_map[g]
-                    # Skip clearly incomparable sampled totals mistaken as means
-                    if gv > 1e5 and hv < 1e3:
-                        continue
-                    if hv > 0 and gv / hv > 1e4:
+                    if not _plausible_maha_pair(gv, hv):
                         continue
                     rows.append(
                         {
@@ -308,8 +473,14 @@ def extract_notebook_maha_pairs() -> pd.DataFrame:
             ]
         )
     df = pd.DataFrame(rows)
-    # Prefer print pairs, then standard table, then sampled
-    kind_pref = {"print": 0, "table": 1, "sampled_table": 2}
+    # Prefer explicit print pairs, then HTML tables, then legacy text parsers
+    kind_pref = {
+        "print": 0,
+        "sdv_html_table": 1,
+        "split_html_table": 2,
+        "table": 3,
+        "sampled_table": 4,
+    }
     df["_p"] = df["nb_kind"].map(kind_pref).fillna(9)
     df = df.sort_values("_p").drop_duplicates(["Dataset", "Generator"], keep="first")
     return df.drop(columns=["_p"])

@@ -3,7 +3,7 @@
   "generators_identified": 8,
   "expected_120": 120,
   "cosine_pairwise_hungarian_pairs": 108,
-  "mahalanobis_greedy_hungarian_pairs": 106,
+  "mahalanobis_greedy_hungarian_pairs": 114,
   "greedy_cosine_extracted": false,
   "hungarian_cosine_extracted": true,
   "greedy_mahalanobis_extracted": true,

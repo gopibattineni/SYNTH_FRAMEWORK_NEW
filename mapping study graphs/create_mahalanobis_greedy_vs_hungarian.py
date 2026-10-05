@@ -456,16 +456,30 @@ def fig_generator_summary(df: pd.DataFrame) -> None:
     save_fig(fig, OUT / "generator_comparison" / "Fig03_generator_mean_diff")
 
 
+def _fmt_diff_annot(v) -> str:
+    """Adaptive annotation for Hung−Greedy diffs (handles near-zero Energy/RE ties)."""
+    if v is None or (isinstance(v, float) and np.isnan(v)) or pd.isna(v):
+        return "n/a"
+    v = float(v)
+    if abs(v) < 5e-4:
+        return "≈0"
+    if abs(v) < 0.01:
+        return f"{v:.3f}"
+    if abs(v) >= 100:
+        return f"{v:.1f}"
+    return f"{v:.2f}"
+
+
 def fig_heatmap(df: pd.DataFrame) -> None:
+    # Full 15×8 grid so unpaired units appear explicitly as missing.
     pivot = df.pivot_table(
         index="Dataset", columns="Generator", values="Diff_Hung_minus_Greedy", observed=False
     )
-    pivot = pivot.reindex(index=[d for d in DS_ORDER if d in pivot.index], columns=[g for g in GEN_ORDER if g in pivot.columns])
-    annot = pivot.copy()
-    # readable annotations
-    annot = annot.map(lambda v: "" if pd.isna(v) else f"{v:.2f}")
+    pivot = pivot.reindex(index=DS_ORDER, columns=GEN_ORDER)
+    annot = pivot.map(_fmt_diff_annot)
     fig, ax = plt.subplots(figsize=(10.5, 7.2))
-    vmax = np.nanpercentile(np.abs(pivot.to_numpy(dtype=float)), 90)
+    finite = pivot.to_numpy(dtype=float)
+    vmax = np.nanpercentile(np.abs(finite), 90)
     vmax = max(float(vmax), 1e-6)
     sns.heatmap(
         pivot.astype(float),
@@ -482,7 +496,23 @@ def fig_heatmap(df: pd.DataFrame) -> None:
         xticklabels=[GEN_LABEL.get(c, c) for c in pivot.columns],
         yticklabels=[DS_LABEL.get(i, i) for i in pivot.index],
     )
-    ax.set_title("Mahalanobis difference heatmap (Hungarian − Greedy)")
+    # Seaborn may skip annotations on NaN cells — force "n/a" labels.
+    for i in range(pivot.shape[0]):
+        for j in range(pivot.shape[1]):
+            if pd.isna(pivot.iloc[i, j]):
+                ax.text(
+                    j + 0.5,
+                    i + 0.5,
+                    "n/a",
+                    ha="center",
+                    va="center",
+                    fontsize=8,
+                    color="#6b7280",
+                )
+    ax.set_title(
+        "Mahalanobis difference heatmap (Hungarian − Greedy)\n"
+        "n/a = unpaired (Greedy and/or Hungarian missing); ≈0 = |diff| < 5×10⁻⁴"
+    )
     ax.set_xlabel("")
     ax.set_ylabel("")
     plt.setp(ax.get_xticklabels(), rotation=35, ha="right")

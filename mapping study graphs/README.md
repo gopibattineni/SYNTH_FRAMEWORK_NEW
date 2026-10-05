@@ -12,7 +12,7 @@ How much does **Hungarian matching** improve sample-to-sample matching compared 
 |---|---|---:|---|
 | Greedy (many-to-one) Cosine vs Hungarian Cosine | **No** | 0 | Notebooks printed top-10 only; means not persisted |
 | Pairwise Cosine vs Hungarian Cosine | Yes | 108 | `Agreed analysis/mapping_cost_comparison.csv` |
-| Greedy (one-to-one) Mahalanobis vs Hungarian | Yes | 106 | Notebook outputs + Hungarian Excel / curated CSV |
+| Greedy (one-to-one) Mahalanobis vs Hungarian | Yes | 114 | Notebook outputs + Hungarian Excel / curated CSV |
 
 **Cosine figures therefore use Pairwise Cosine as the non-Hungarian baseline** and are labeled accordingly (not “Greedy”).
 **Mahalanobis figures use One-to-One Greedy**, which is the greedy Mahalanobis procedure implemented in the notebooks.
@@ -42,10 +42,10 @@ Near-zero pairwise denominators are flagged in `hungarian_vs_greedy_summary.csv`
 - % cases Hungarian higher = 100.0%
 
 ### Mahalanobis (Greedy one-to-one → Hungarian)
-- N = 106
-- Mean ΔMahalanobis = 1.3540
-- Median ΔMahalanobis = 0.1292
-- % cases Hungarian improved (lower distance) = 91.5%
+- N = 114
+- Mean ΔMahalanobis = 0.4912
+- Median ΔMahalanobis = 0.1334
+- % cases Hungarian improved (lower distance) = 93.0%
 
 ## Main paper figures
 
@@ -73,27 +73,3 @@ Each folder: PNG (300 DPI) + SVG.
 cd "SYNTH/mapping study graphs"
 python create_hungarian_vs_greedy_figures.py
 ```
-
-## Coverage gaps (honest)
-
-- **Greedy cosine** aggregates were never persisted (top-10 prints only) → Figures 1/3/5a/6a use **Pairwise Cosine**, not Greedy.
-- **Mahalanobis pairs = 106 / 120**. Missing comparable pairs where notebook Greedy means were non-comparable (e.g. Wine/Bank/OnlineShop SDV sampled means vs Hungarian) or outputs absent.
-- Incomparable Wine SDV “Greedy mean (sampled)” values (~1e7–1e8) were **excluded** (not used).
-
-## Figure 5 note
-
-Panel (a) shows **Δ Cosine** (not %) because Pairwise baselines are near zero, making Cosine % numerically unstable (flagged in the summary CSV). Panel (b) shows Mahalanobis **%** improvement.
-
-## Important findings (extracted results only)
-
-### Cosine (Pairwise → Hungarian, N=108)
-- Hungarian cosine is higher in **100%** of dataset×generator cases.
-- Mean Δ ≈ **0.971**, median ≈ **0.985**.
-
-### Mahalanobis (One-to-One Greedy → Hungarian, N=106)
-- Hungarian lower distance in **91.5%** of cases; worse in **5.7%**; ties **2.8%**.
-- Mean Δ ≈ **1.35**, median ≈ **0.13** (positive = Hungarian improvement).
-- Wilcoxon signed-rank (paired, Greedy > Hungarian): significant (see `hungarian_vs_greedy_paired_tests.csv`).
-
-### Where Greedy can look better
-- A small minority of Mahalanobis pairs have Δ < 0 (Hungarian distance higher than Greedy). Inspect `hungarian_vs_greedy_summary.csv` filtered on `Delta_Mahalanobis < 0`.

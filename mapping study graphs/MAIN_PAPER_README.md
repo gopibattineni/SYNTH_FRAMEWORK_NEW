@@ -47,7 +47,7 @@ documented rather than imputed.
 ## Supplementary
 
 - Detailed figures: **23** (PNG+SVG each)
-- Summary/detail tables: **6**
+- Summary/detail tables: **7**
 - Locations:
   - `supplementary/dataset_level/`
   - `supplementary/generator_level/`

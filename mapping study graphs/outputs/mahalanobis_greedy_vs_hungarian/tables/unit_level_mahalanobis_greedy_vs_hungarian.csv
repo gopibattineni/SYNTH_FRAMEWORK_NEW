@@ -1,12 +1,12 @@
 Dataset,Generator,GeneratorLabel,Greedy_Mahalanobis,Hungarian_Mahalanobis,Diff_Hung_minus_Greedy,RelPct_Hung_minus_Greedy,RelPct_Unstable,Direction,Num_Matches,Runtime_Greedy,Runtime_Hungarian,Runtime_Note
 Cancer,ForestDiffusion,Forest Diffusion,3.9522,3.8838,-0.06840000000000002,-1.7306816456657057,False,Hungarian better (lower distance),569.0,,,Not available in extracted results
-Cancer,TVAE,TVAE,32.553191,10.038234,-22.514957,-69.16359443840697,False,Hungarian better (lower distance),569.0,,,Not available in extracted results
-Cancer,GaussianCopula,Gaussian Copula,1.969295,3.102918,1.1336229999999998,57.56491536311217,False,Hungarian worse (higher distance),569.0,,,Not available in extracted results
+Cancer,TVAE,TVAE,44.110818,43.786276,-0.324542000000001,-0.7357424203740701,False,Hungarian better (lower distance),569.0,,,Not available in extracted results
+Cancer,GaussianCopula,Gaussian Copula,6.494969,6.265554,-0.22941500000000037,-3.532195457745839,False,Hungarian better (lower distance),569.0,,,Not available in extracted results
 Cancer,WGAN_GP,WGAN-GP,6.3872,6.2186,-0.16859999999999964,-2.639654308617229,False,Hungarian better (lower distance),569.0,,,Not available in extracted results
 Cancer,CTABGAN,CTAB-GAN+,50.2123,49.9043,-0.30799999999999983,-0.6133955226109934,False,Hungarian better (lower distance),569.0,,,Not available in extracted results
-Cancer,CTGAN,CTGAN,56.891797,27.692581,-29.199215999999996,-51.32412322992715,False,Hungarian better (lower distance),569.0,,,Not available in extracted results
+Cancer,CTGAN,CTGAN,110.861512,110.561526,-0.2999860000000041,-0.2705952630341214,False,Hungarian better (lower distance),569.0,,,Not available in extracted results
 Cancer,TabDDPM,TabDDPM,34.6458,34.4334,-0.21240000000000236,-0.6130613234504684,False,Hungarian better (lower distance),569.0,,,Not available in extracted results
-Cancer,CopulaGAN,Copula GAN,64.834342,26.091745,-38.742597,-59.756289344310765,False,Hungarian better (lower distance),569.0,,,Not available in extracted results
+Cancer,CopulaGAN,Copula GAN,134.275819,133.996058,-0.2797610000000077,-0.20834801238487152,False,Hungarian better (lower distance),569.0,,,Not available in extracted results
 Alzheimers,ForestDiffusion,Forest Diffusion,1.4367,1.4215,-0.015200000000000102,-1.0579800932693046,False,Hungarian better (lower distance),373.0,,,Not available in extracted results
 Alzheimers,TVAE,TVAE,4.814556,4.593258,-0.221298,-4.596436306899328,False,Hungarian better (lower distance),373.0,,,Not available in extracted results
 Alzheimers,GaussianCopula,Gaussian Copula,3.699365,3.421645,-0.27771999999999997,-7.5072343496789316,False,Hungarian better (lower distance),373.0,,,Not available in extracted results
@@ -17,12 +17,12 @@ Alzheimers,TabDDPM,TabDDPM,3.317,3.1511,-0.16590000000000016,-5.001507386192348,
 Alzheimers,CopulaGAN,Copula GAN,12.265453,11.991024,-0.27442900000000137,-2.237414305040355,False,Hungarian better (lower distance),373.0,,,Not available in extracted results
 Adult,ForestDiffusion,Forest Diffusion,0.8831,0.7605,-0.12260000000000004,-13.882912467444237,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Adult,TVAE,TVAE,2.491583,2.432874,-0.0587089999999999,-2.3562931678374714,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
-Adult,GaussianCopula,Gaussian Copula,1.620219,2.425423,0.8052039999999998,49.697232287733925,False,Hungarian worse (higher distance),1000.0,,,Not available in extracted results
+Adult,GaussianCopula,Gaussian Copula,5.795991,5.65728,-0.1387109999999998,-2.393223177882778,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Adult,WGAN_GP,WGAN-GP,1.7954,1.6473,-0.14810000000000012,-8.248858193160306,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Adult,CTABGAN,CTAB-GAN+,2.508,2.4285,-0.0794999999999999,-3.1698564593301395,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Adult,CTGAN,CTGAN,1.768268,1.536617,-0.23165100000000005,-13.100446312436807,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Adult,TabDDPM,TabDDPM,11.842,11.7306,-0.11139999999999972,-0.9407194730619803,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
-Adult,CopulaGAN,Copula GAN,1.395532,0.713123,-0.682409,-48.899559451162716,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
+Adult,CopulaGAN,Copula GAN,2.101094,1.888801,-0.21229299999999984,-10.10392681146107,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 ForestCover,ForestDiffusion,Forest Diffusion,10.3564,10.2136,-0.14280000000000115,-1.3788575180564784,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 ForestCover,TVAE,TVAE,191.5824,191.5313,-0.05110000000001946,-0.026672596230144032,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 ForestCover,GaussianCopula,Gaussian Copula,283.6519,283.6313,-0.020600000000001728,-0.007262422708961839,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
@@ -32,13 +32,21 @@ ForestCover,CTGAN,CTGAN,387.984,387.9311,-0.05289999999996553,-0.013634582869387
 ForestCover,TabDDPM,TabDDPM,636.1656,636.1193,-0.04630000000008749,-0.00727797919285285,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 ForestCover,CopulaGAN,Copula GAN,391.878,391.836,-0.04199999999997317,-0.010717621300499944,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Bank,ForestDiffusion,Forest Diffusion,0.9368,0.8085,-0.12829999999999997,-13.695559350982064,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
+Bank,TVAE,TVAE,1.251366,1.065509,-0.18585699999999994,-14.852329374459588,False,Hungarian better (lower distance),10000.0,,,Not available in extracted results
+Bank,GaussianCopula,Gaussian Copula,1.911779,1.536039,-0.37573999999999996,-19.653945356654717,False,Hungarian better (lower distance),10000.0,,,Not available in extracted results
 Bank,WGAN_GP,WGAN-GP,2.2412,2.0781,-0.16310000000000002,-7.277351418882742,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Bank,CTABGAN,CTAB-GAN+,1.3445,1.1716,-0.17290000000000005,-12.859799181851994,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
+Bank,CTGAN,CTGAN,1.002759,0.721561,-0.28119799999999995,-28.042430933055694,False,Hungarian better (lower distance),10000.0,,,Not available in extracted results
 Bank,TabDDPM,TabDDPM,10.6833,10.5591,-0.12419999999999831,-1.162562129679016,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
+Bank,CopulaGAN,Copula GAN,1.267484,0.973256,-0.29422800000000005,-23.213547468843792,False,Hungarian better (lower distance),10000.0,,,Not available in extracted results
 Wine,ForestDiffusion,Forest Diffusion,1.6171,1.5167,-0.10040000000000004,-6.208645105435659,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
+Wine,TVAE,TVAE,2.550131147570549,2.062422642354435,-0.48770850521611386,-19.124840135408036,False,Hungarian better (lower distance),6497.0,,,Not available in extracted results
+Wine,GaussianCopula,Gaussian Copula,2.167596417725627,2.0111098179874007,-0.15648659973822632,-7.2193605072673765,False,Hungarian better (lower distance),6497.0,,,Not available in extracted results
 Wine,WGAN_GP,WGAN-GP,3.6759,3.3891,-0.28679999999999994,-7.802170896923201,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Wine,CTABGAN,CTAB-GAN+,3.3377,3.1203,-0.21740000000000004,-6.513467357761334,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
+Wine,CTGAN,CTGAN,3.5010711082095494,3.096475460767122,-0.40459564744242726,-11.556339044177193,False,Hungarian better (lower distance),6497.0,,,Not available in extracted results
 Wine,TabDDPM,TabDDPM,5.4729,5.1842,-0.2887000000000004,-5.275082680114754,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
+Wine,CopulaGAN,Copula GAN,3.171785053292916,2.740441860745499,-0.43134319254741715,-13.599382849086853,False,Hungarian better (lower distance),6497.0,,,Not available in extracted results
 CDC,ForestDiffusion,Forest Diffusion,2.7934,2.6942,-0.09920000000000018,-3.5512278943223374,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 CDC,TVAE,TVAE,3.0372,2.801934,-0.23526599999999975,-7.74614776768075,False,Hungarian better (lower distance),5000.0,,,Not available in extracted results
 CDC,GaussianCopula,Gaussian Copula,3.956109,3.569087,-0.387022,-9.782895264008145,False,Hungarian better (lower distance),5000.0,,,Not available in extracted results
@@ -62,7 +70,7 @@ MAGIC,WGAN_GP,WGAN-GP,1.209,1.1898,-0.019200000000000106,-1.5880893300248227,Fal
 MAGIC,CTABGAN,CTAB-GAN+,1.9498,1.8741,-0.07569999999999988,-3.8824494819981474,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 MAGIC,CTGAN,CTGAN,2.43384,3.383397,0.949557,39.01476678828518,False,Hungarian worse (higher distance),19020.0,,,Not available in extracted results
 MAGIC,TabDDPM,TabDDPM,4.5721,4.2848,-0.2873000000000001,-6.2837645720784785,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
-MAGIC,CopulaGAN,Copula GAN,1.952442,1.282184,-0.670258,-34.32921438895496,False,Hungarian better (lower distance),19020.0,,,Not available in extracted results
+MAGIC,CopulaGAN,Copula GAN,2.200845,3.055436,0.8545909999999997,38.83013115417031,False,Hungarian worse (higher distance),19020.0,,,Not available in extracted results
 Metro,ForestDiffusion,Forest Diffusion,0.35574,0.297551,-0.05818899999999999,-16.357170967560577,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Metro,TVAE,TVAE,0.258434,0.291262,0.032828000000000024,12.702662962303732,False,Hungarian worse (higher distance),5000.0,,,Not available in extracted results
 Metro,GaussianCopula,Gaussian Copula,27.853218,27.790041,-0.0631769999999996,-0.22682118812985846,False,Hungarian better (lower distance),5000.0,,,Not available in extracted results
@@ -72,15 +80,21 @@ Metro,CTGAN,CTGAN,0.431625,0.399805,-0.03181999999999996,-7.372140167969873,Fals
 Metro,TabDDPM,TabDDPM,13.596022,13.548747,-0.04727499999999907,-0.3477119998776044,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Metro,CopulaGAN,Copula GAN,0.587039,0.482782,-0.10425699999999999,-17.759808121777258,False,Hungarian better (lower distance),5000.0,,,Not available in extracted results
 OnlineShop,ForestDiffusion,Forest Diffusion,1.94589,1.816702,-0.12918799999999986,-6.639018649563947,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
+OnlineShop,TVAE,TVAE,2.525588,2.384212,-0.14137599999999972,-5.597745950645938,False,Hungarian better (lower distance),,,,Not available in extracted results
+OnlineShop,GaussianCopula,Gaussian Copula,1.722005,1.587593,-0.13441199999999998,-7.805552248686849,False,Hungarian better (lower distance),,,,Not available in extracted results
 OnlineShop,WGAN_GP,WGAN-GP,3.20519,3.055943,-0.1492469999999999,-4.6564166242874805,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 OnlineShop,CTABGAN,CTAB-GAN+,2.588096,2.433242,-0.15485400000000027,-5.983317465812716,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
+OnlineShop,CTGAN,CTGAN,1.712434,1.567794,-0.1446400000000001,-8.446456914543866,False,Hungarian better (lower distance),,,,Not available in extracted results
 OnlineShop,TabDDPM,TabDDPM,5.801993,5.638238,-0.1637550000000001,-2.8223922365987013,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
+OnlineShop,CopulaGAN,Copula GAN,1.741369,1.581511,-0.15985800000000006,-9.180018709417709,False,Hungarian better (lower distance),,,,Not available in extracted results
 AirQuality,ForestDiffusion,Forest Diffusion,1.7287,1.6389,-0.08979999999999988,-5.19465494302076,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 AirQuality,TVAE,TVAE,53.42266,20.605003,-32.817657,-61.430218937057795,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 AirQuality,GaussianCopula,Gaussian Copula,28.73888,18.531944,-10.206936000000002,-35.51612310570211,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 AirQuality,WGAN_GP,WGAN-GP,4.9184,4.6189,-0.2995000000000001,-6.0893786597267425,False,Hungarian better (lower distance),,,,Not available in extracted results
 AirQuality,CTABGAN,CTAB-GAN+,9.2838,9.02,-0.2637999999999998,-2.8415088649044553,False,Hungarian better (lower distance),,,,Not available in extracted results
+AirQuality,CTGAN,CTGAN,15.877545736639568,15.582147453043936,-0.2953982835956328,-1.8604782407520428,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 AirQuality,TabDDPM,TabDDPM,6.392,6.1055,-0.2865000000000002,-4.482165206508138,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
+AirQuality,CopulaGAN,Copula GAN,17.04914586325495,16.7797488635705,-0.2693969996844494,-1.5801202115647646,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Concrete,ForestDiffusion,Forest Diffusion,0.9112,0.8489,-0.06230000000000002,-6.837137840210714,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Concrete,TVAE,TVAE,3.345275,3.145877,-0.19939799999999996,-5.960586199938719,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
 Concrete,GaussianCopula,Gaussian Copula,3.985879,3.685769,-0.3001100000000001,-7.529330418710655,False,Hungarian better (lower distance),1000.0,,,Not available in extracted results
