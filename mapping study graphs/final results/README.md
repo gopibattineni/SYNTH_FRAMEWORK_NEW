@@ -16,6 +16,12 @@ Improvement(%) = (D_Greedy − D_Hungarian) / D_Greedy × 100
   < 0  → Greedy better
 ```
 
+## Figure style (journal / LaTeX)
+- Times New Roman (serif) typography throughout
+- Okabe–Ito colorblind-safe palette; hatch patterns for B&W print
+- Panel letters `(a)/(b)` where applicable; 600 dpi PNG + PDF/SVG
+- Clean spines (no top/right), light grid, Nature-style layout widths (~7 in double column)
+
 ## Figures
 | File | Description |
 |------|-------------|

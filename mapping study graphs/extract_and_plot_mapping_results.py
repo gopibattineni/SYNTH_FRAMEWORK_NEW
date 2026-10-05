@@ -100,15 +100,34 @@ LATEST_HUNG_MAHA = {
     ],
 }
 
+_fonts_dir = Path(__file__).resolve().parent / "fonts"
+if _fonts_dir.is_dir():
+    from matplotlib import font_manager as fm
+
+    for _ttf in _fonts_dir.glob("*.ttf"):
+        try:
+            fm.fontManager.addfont(str(_ttf))
+        except (OSError, RuntimeError, ValueError):
+            pass
+
 sns.set_theme(style="whitegrid", context="paper", font_scale=1.05)
 plt.rcParams.update(
     {
         "font.family": "serif",
-        "font.serif": ["Times New Roman", "Times", "Nimbus Roman", "Liberation Serif", "DejaVu Serif"],
+        "font.serif": [
+            "Times New Roman",
+            "Times",
+            "Nimbus Roman",
+            "Liberation Serif",
+            "TeX Gyre Termes",
+            "DejaVu Serif",
+        ],
         "mathtext.fontset": "stix",
         "figure.dpi": DPI,
         "savefig.dpi": DPI,
         "svg.fonttype": "none",  # keep text as text in SVG
+        "pdf.fonttype": 42,
+        "ps.fonttype": 42,
         "axes.titlesize": 11,
         "axes.labelsize": 10,
         "legend.fontsize": 8,

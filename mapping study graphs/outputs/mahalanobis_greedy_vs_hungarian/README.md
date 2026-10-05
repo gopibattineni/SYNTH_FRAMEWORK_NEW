@@ -35,22 +35,28 @@ Rel% = 100 * (Hungarian - Greedy) / |Greedy|   (undefined/unstable if |Greedy|�
 
 ## Coverage
 
-- Paired units processed: **120** of 120 possible (15 datasets × 8 generators)
-- Skipped units: **0**
+- Paired units processed: **114** of 120 possible (15 datasets × 8 generators)
+- Skipped units: **6**
 - Datasets: Adult, AirQuality, Alzheimers, Bank, CDC, Cancer, Concrete, Energy, ForestCover, MAGIC, Metro, Mushroom, OnlineShop, RealEstate, Wine
 - Generators: CTABGAN, CTGAN, CopulaGAN, ForestDiffusion, GaussianCopula, TVAE, TabDDPM, WGAN_GP
 
 ### Skipped dataset × generator units
 
+- `Wine` / `CTGAN`: incomplete Mahalanobis methods available: ['Hungarian', 'One-to-One Greedy']
+- `Wine` / `CopulaGAN`: incomplete Mahalanobis methods available: ['Hungarian', 'One-to-One Greedy']
+- `Wine` / `TVAE`: incomplete Mahalanobis methods available: ['Hungarian', 'One-to-One Greedy']
+- `Wine` / `GaussianCopula`: incomplete Mahalanobis methods available: ['Hungarian', 'One-to-One Greedy']
+- `AirQuality` / `CTGAN`: incomplete Mahalanobis methods available: ['Hungarian', 'One-to-One Greedy']
+- `AirQuality` / `CopulaGAN`: incomplete Mahalanobis methods available: ['Hungarian', 'One-to-One Greedy']
 
 ## Overall results
 
-- Mean Diff (H−G): **-0.4837**
-- SD Diff: **3.1220**
-- Median Diff: **-0.1393**
-- % Hungarian better: **93.3%**
-- Wilcoxon p (H1: Greedy > Hungarian): **2.438e-16**
-- Rank-biserial effect size: **0.773**
+- Mean Diff (H−G): **-0.4912**
+- SD Diff: **3.2035**
+- Median Diff: **-0.1334**
+- % Hungarian better: **93.0%**
+- Wilcoxon p (H1: Greedy > Hungarian): **2.285e-15**
+- Rank-biserial effect size: **0.761**
 
 Paired Wilcoxon signed-rank tests are also reported by generator and by dataset,
 with Holm adjustment within each scope (`tables/paired_statistical_tests.csv`).

@@ -83,38 +83,147 @@ SHORT_LABEL = {
     "RealEstate": "RE",
 }
 
-COLOR_GREEDY = "#2563eb"
-COLOR_HUNG = "#c2410c"
-COLOR_POS = "#1b7f5a"  # Hungarian better
-COLOR_NEG = "#b23a48"  # Greedy better
-COLOR_CLS = "#1d4ed8"
-COLOR_REG = "#b45309"
+# Okabe–Ito / colorblind-safe academic palette
+COLOR_GREEDY = "#0072B2"  # blue
+COLOR_HUNG = "#D55E00"  # vermillion
+COLOR_POS = "#009E73"  # bluish green — Hungarian better
+COLOR_NEG = "#CC79A7"  # reddish purple — Greedy better
+COLOR_CLS = "#0072B2"
+COLOR_REG = "#E69F00"  # orange
+COLOR_INK = "#1a1a1a"
+COLOR_MUTED = "#5a5a5a"
+COLOR_GRID = "#d9d9d9"
+COLOR_ZERO = "#333333"
+
+
+def _register_project_fonts() -> None:
+    """Register bundled Times-compatible fonts (Liberation Serif ≈ Times New Roman)."""
+    fonts_dir = BASE / "fonts"
+    if not fonts_dir.is_dir():
+        return
+    from matplotlib import font_manager as fm
+
+    for ttf in sorted(fonts_dir.glob("LiberationSerif*.ttf")):
+        try:
+            fm.fontManager.addfont(str(ttf))
+        except (OSError, RuntimeError, ValueError):
+            pass
+    for ttf in sorted(fonts_dir.glob("Times*.ttf")):
+        try:
+            fm.fontManager.addfont(str(ttf))
+        except (OSError, RuntimeError, ValueError):
+            pass
 
 
 def setup_style() -> None:
+    """Publication style: Times New Roman, clean spines, journal-ready DPI."""
+    _register_project_fonts()
+    serif_stack = [
+        "Times New Roman",
+        "Times",
+        "Nimbus Roman",
+        "Liberation Serif",
+        "TeX Gyre Termes",
+        "DejaVu Serif",
+    ]
     mpl.rcParams.update(
         {
-            "figure.dpi": 140,
-            "savefig.dpi": 300,
-            "font.size": 10,
-            "axes.titlesize": 12,
-            "axes.labelsize": 11,
-            "xtick.labelsize": 9,
-            "ytick.labelsize": 9,
-            "legend.fontsize": 9,
+            "font.family": "serif",
+            "font.serif": serif_stack,
+            "mathtext.fontset": "stix",
+            "figure.dpi": 150,
+            "savefig.dpi": 600,
+            "savefig.bbox": "tight",
+            "savefig.pad_inches": 0.04,
+            "font.size": 9,
+            "axes.titlesize": 10,
+            "axes.labelsize": 9.5,
+            "axes.labelcolor": COLOR_INK,
+            "axes.edgecolor": COLOR_INK,
+            "axes.linewidth": 0.9,
+            "axes.titleweight": "bold",
+            "axes.titlepad": 8,
+            "xtick.labelsize": 8.5,
+            "ytick.labelsize": 8.5,
+            "xtick.color": COLOR_INK,
+            "ytick.color": COLOR_INK,
+            "xtick.direction": "out",
+            "ytick.direction": "out",
+            "xtick.major.width": 0.8,
+            "ytick.major.width": 0.8,
+            "xtick.major.size": 3.5,
+            "ytick.major.size": 3.5,
+            "legend.fontsize": 8,
+            "legend.frameon": False,
+            "legend.handlelength": 1.4,
+            "legend.handletextpad": 0.5,
             "axes.spines.top": False,
             "axes.spines.right": False,
+            "axes.grid": False,
+            "grid.color": COLOR_GRID,
+            "grid.linewidth": 0.6,
+            "grid.alpha": 1.0,
+            "lines.linewidth": 1.2,
             "pdf.fonttype": 42,
             "ps.fonttype": 42,
+            "svg.fonttype": "none",
+            "figure.facecolor": "white",
+            "axes.facecolor": "white",
+            "text.color": COLOR_INK,
         }
     )
-    sns.set_theme(style="whitegrid", context="paper", font_scale=1.05)
+    # Avoid seaborn theme overrides; keep ticks-only academic look.
+    sns.set_theme(style="ticks", context="paper", font="serif", font_scale=1.0)
+    mpl.rcParams["font.family"] = "serif"
+    mpl.rcParams["font.serif"] = serif_stack
+
+
+def style_axes(ax: plt.Axes, grid: str | None = "y") -> None:
+    """Apply consistent research-paper axis chrome."""
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_color(COLOR_INK)
+    ax.spines["bottom"].set_color(COLOR_INK)
+    ax.spines["left"].set_linewidth(0.9)
+    ax.spines["bottom"].set_linewidth(0.9)
+    ax.tick_params(colors=COLOR_INK, width=0.8, length=3.5)
+    if grid == "y":
+        ax.yaxis.grid(True, color=COLOR_GRID, linewidth=0.6, zorder=0)
+        ax.set_axisbelow(True)
+    elif grid == "x":
+        ax.xaxis.grid(True, color=COLOR_GRID, linewidth=0.6, zorder=0)
+        ax.set_axisbelow(True)
+    elif grid == "both":
+        ax.grid(True, color=COLOR_GRID, linewidth=0.55, zorder=0)
+        ax.set_axisbelow(True)
+
+
+def panel_label(ax: plt.Axes, letter: str) -> None:
+    """Nature/Science-style panel letter outside the axes."""
+    ax.text(
+        -0.12,
+        1.05,
+        f"({letter})",
+        transform=ax.transAxes,
+        fontsize=11,
+        fontweight="bold",
+        va="bottom",
+        ha="right",
+        color=COLOR_INK,
+        clip_on=False,
+    )
 
 
 def save_fig(fig: plt.Figure, stem: Path) -> None:
     stem.parent.mkdir(parents=True, exist_ok=True)
     for ext in (".png", ".pdf", ".svg"):
-        fig.savefig(stem.with_suffix(ext), bbox_inches="tight", facecolor="white")
+        fig.savefig(
+            stem.with_suffix(ext),
+            bbox_inches="tight",
+            facecolor="white",
+            edgecolor="none",
+            dpi=600 if ext == ".png" else None,
+        )
     plt.close(fig)
 
 
@@ -227,14 +336,14 @@ def fig1_overall(ds: pd.DataFrame) -> None:
     Uses geometric mean across datasets (distances span orders of magnitude;
     arithmetic mean would be dominated by Energy / Real Estate / Cancer).
     """
-    fig, axes = plt.subplots(1, 2, figsize=(9.2, 4.4), sharey=False)
-    for ax, typ in zip(axes, ["Classification", "Regression"]):
+    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.35), sharey=False)
+    letters = ("a", "b")
+    for ax, typ, letter in zip(axes, ["Classification", "Regression"], letters):
         sub = ds[ds["Type"] == typ]
         gvals = sub["Greedy"].to_numpy(float)
         hvals = sub["Hungarian"].to_numpy(float)
         g_mean = float(np.exp(np.mean(np.log(gvals))))
         h_mean = float(np.exp(np.mean(np.log(hvals))))
-        # Geometric SEM ≈ exp(mean_log) * SEM(log)
         g_sem = g_mean * float(np.std(np.log(gvals), ddof=1) / np.sqrt(len(gvals)))
         h_sem = h_mean * float(np.std(np.log(hvals), ddof=1) / np.sqrt(len(hvals)))
         means = [g_mean, h_mean]
@@ -245,139 +354,237 @@ def fig1_overall(ds: pd.DataFrame) -> None:
             means,
             yerr=sems,
             color=[COLOR_GREEDY, COLOR_HUNG],
-            width=0.62,
-            capsize=4,
-            ecolor="#475569",
+            width=0.58,
+            capsize=3.5,
+            error_kw={
+                "ecolor": COLOR_MUTED,
+                "elinewidth": 0.9,
+                "capthick": 0.9,
+                "zorder": 3,
+            },
             edgecolor="white",
-            linewidth=0.6,
+            linewidth=0.8,
+            zorder=2,
         )
+        # Subtle hatch for B&W print readability
+        bars[0].set_hatch("///")
+        bars[0].set_edgecolor("white")
+        bars[1].set_hatch("\\\\\\")
+        bars[1].set_edgecolor("white")
+
         ax.set_xticks(x)
         ax.set_xticklabels(["Greedy", "Hungarian"])
-        ax.set_title(f"{typ} (n={len(sub)} datasets)")
+        ax.set_title(f"{typ}  ($n={len(sub)}$ datasets)", pad=6)
         ax.set_ylabel("Geometric mean Mahalanobis distance" if ax is axes[0] else "")
         ax.set_yscale("log")
+        # Headroom for error bars + labels
+        ymax = max(m + s for m, s in zip(means, sems))
+        ymin = min(max(m - s, m * 0.2) for m, s in zip(means, sems))
+        ax.set_ylim(ymin * 0.75, ymax * 1.45)
         for b, v in zip(bars, means):
             ax.annotate(
                 f"{v:.3g}",
                 (b.get_x() + b.get_width() / 2, b.get_height()),
                 ha="center",
                 va="bottom",
-                fontsize=8.5,
-                xytext=(0, 3),
+                fontsize=8,
+                color=COLOR_INK,
+                xytext=(0, 4),
                 textcoords="offset points",
+                zorder=4,
             )
-        for spine in ("top", "right"):
-            ax.spines[spine].set_visible(False)
-        ax.grid(axis="y", alpha=0.3)
-        ax.set_xlim(-0.5, 1.5)
+        style_axes(ax, grid="y")
+        panel_label(ax, letter)
+        ax.set_xlim(-0.55, 1.55)
 
-    fig.suptitle(
-        "Figure 1. Overall Mahalanobis matching cost by method\n"
-        "(geometric mean ± SEM across datasets; log scale)",
-        y=1.03,
-        fontsize=12,
+    # Shared legend above panels
+    from matplotlib.patches import Patch
+
+    handles = [
+        Patch(facecolor=COLOR_GREEDY, edgecolor="white", hatch="///", label="One-to-one Greedy"),
+        Patch(facecolor=COLOR_HUNG, edgecolor="white", hatch="\\\\\\", label="Hungarian"),
+    ]
+    fig.legend(
+        handles=handles,
+        loc="upper center",
+        ncol=2,
+        bbox_to_anchor=(0.5, 1.02),
+        frameon=False,
+        fontsize=8.5,
     )
-    fig.tight_layout()
+    fig.suptitle(
+        "Overall Mahalanobis matching cost by method\n"
+        "Geometric mean $\\pm$ SEM across datasets (log scale)",
+        y=1.14,
+        fontsize=10.5,
+        fontweight="bold",
+        color=COLOR_INK,
+    )
+    fig.tight_layout(w_pad=2.2)
     save_fig(fig, OUT / "figures" / "Fig01_overall_comparison")
 
 
 def fig2_heatmap(ds: pd.DataFrame) -> None:
     """Dataset × {Greedy, Hungarian} absolute mean distances."""
-    mat = ds.set_index("Short")[["Greedy", "Hungarian"]]
-    # Preserve class then regression order
+    mat = ds.set_index("Short")[["Greedy", "Hungarian"]].copy()
     order = [SHORT_LABEL[d] for d in DS_ORDER if d in set(ds["Dataset"])]
     mat = mat.reindex(order)
 
-    fig, ax = plt.subplots(figsize=(6.2, 8.0))
+    fig, ax = plt.subplots(figsize=(4.8, 6.6))
     vals = mat.to_numpy(dtype=float)
     vmin = max(np.nanmin(vals[vals > 0]), 1e-3)
     vmax = np.nanmax(vals)
-    sns.heatmap(
+    hm = sns.heatmap(
         mat,
         ax=ax,
         annot=True,
         fmt=".3g",
-        cmap="YlOrRd",
+        cmap="cividis",
         norm=LogNorm(vmin=vmin, vmax=vmax),
-        linewidths=0.5,
+        linewidths=0.9,
         linecolor="white",
-        cbar_kws={"label": "Mean Mahalanobis distance (log scale)"},
-        annot_kws={"size": 8},
+        cbar_kws={
+            "label": "Mean Mahalanobis distance (log scale)",
+            "shrink": 0.78,
+            "pad": 0.04,
+        },
+        annot_kws={"size": 7.5, "fontweight": "medium"},
+        square=False,
     )
-    # Separator between classification and regression
+    for text, val in zip(hm.texts, vals.ravel()):
+        t = (np.log10(val) - np.log10(vmin)) / (np.log10(vmax) - np.log10(vmin) + 1e-12)
+        text.set_color("white" if t < 0.55 else COLOR_INK)
+        text.set_fontsize(7.5)
+
     n_cls = sum(1 for d in DS_ORDER if d in CLASSIFICATION and d in set(ds["Dataset"]))
-    ax.axhline(n_cls, color="#0f172a", lw=1.6)
-    ax.annotate(
+    ax.axhline(n_cls, color="white", lw=2.6)
+    ax.axhline(n_cls, color=COLOR_INK, lw=1.1)
+
+    # Left-side group labels (reliable, not clipped)
+    ax.text(
+        -0.42,
+        n_cls / 2.0,
         "Classification",
-        xy=(1.0, 1.0 - (n_cls / 2) / len(mat)),
-        xycoords="axes fraction",
-        xytext=(8, 0),
-        textcoords="offset points",
-        rotation=270,
+        rotation=90,
         va="center",
-        ha="left",
+        ha="center",
         fontsize=9,
+        fontweight="bold",
         color=COLOR_CLS,
-        annotation_clip=False,
+        transform=ax.get_yaxis_transform(),
+        clip_on=False,
     )
-    ax.annotate(
+    ax.text(
+        -0.42,
+        n_cls + (len(mat) - n_cls) / 2.0,
         "Regression",
-        xy=(1.0, 1.0 - (n_cls + (len(mat) - n_cls) / 2) / len(mat)),
-        xycoords="axes fraction",
-        xytext=(8, 0),
-        textcoords="offset points",
-        rotation=270,
+        rotation=90,
         va="center",
-        ha="left",
+        ha="center",
         fontsize=9,
+        fontweight="bold",
         color=COLOR_REG,
-        annotation_clip=False,
+        transform=ax.get_yaxis_transform(),
+        clip_on=False,
     )
+
     ax.set_xlabel("")
     ax.set_ylabel("")
+    ax.tick_params(axis="y", length=0, pad=4)
+    ax.tick_params(axis="x", length=0, pad=5)
+    ax.set_xticklabels(["Greedy", "Hungarian"], fontsize=9)
+    cbar = ax.collections[0].colorbar
+    cbar.ax.tick_params(labelsize=7.5, width=0.7, length=3)
+    cbar.outline.set_linewidth(0.6)
+
     ax.set_title(
-        "Figure 2. Dataset-level Mahalanobis distance\n"
-        "Greedy vs Hungarian (paired generators only)"
+        "Dataset-level Mahalanobis distance\nGreedy vs Hungarian (paired generators)",
+        fontsize=10,
+        fontweight="bold",
+        pad=10,
     )
+    fig.subplots_adjust(left=0.22, right=0.92)
     save_fig(fig, OUT / "figures" / "Fig02_dataset_heatmap")
 
 
 def fig3_improvement(ds: pd.DataFrame) -> None:
     """Diverging bars of Hungarian improvement % per dataset."""
-    plot = ds.sort_values("Improvement_Pct")
-    fig, ax = plt.subplots(figsize=(8.8, 6.6))
+    plot = ds.sort_values("Improvement_Pct").copy()
+    fig, ax = plt.subplots(figsize=(6.8, 5.6))
     y = np.arange(len(plot))
     colors = [
-        COLOR_POS if v > 0 else COLOR_NEG if v < 0 else "#94a3b8"
+        COLOR_POS if v > 0.05 else COLOR_NEG if v < -0.05 else "#9ca3af"
         for v in plot["Improvement_Pct"]
     ]
-    ax.barh(y, plot["Improvement_Pct"], color=colors, height=0.72, edgecolor="white")
-    ax.axvline(0, color="black", lw=1.0)
+    ax.barh(
+        y,
+        plot["Improvement_Pct"],
+        color=colors,
+        height=0.68,
+        edgecolor="white",
+        linewidth=0.5,
+        zorder=2,
+    )
+    ax.axvline(0, color=COLOR_ZERO, lw=1.0, zorder=3)
     labels = [
         f"{r.Short}  ({'C' if r.Type == 'Classification' else 'R'})"
         for r in plot.itertuples()
     ]
     ax.set_yticks(y)
     ax.set_yticklabels(labels)
-    ax.set_xlabel(
-        "Improvement (%) = (Greedy − Hungarian) / Greedy × 100\n"
-        "positive = Hungarian better (lower distance)"
+    ax.set_xlabel("Improvement (%)  ·  positive = Hungarian better")
+    ax.set_title(
+        "Hungarian improvement over Greedy by dataset",
+        fontsize=10.5,
+        fontweight="bold",
+        pad=8,
     )
-    ax.set_title("Figure 3. Hungarian improvement over Greedy by dataset")
-    ax.grid(axis="x", alpha=0.3)
+    style_axes(ax, grid="x")
+
+    vmin = float(np.nanmin(plot["Improvement_Pct"]))
+    vmax = float(np.nanmax(plot["Improvement_Pct"]))
+    pad = max(vmax - vmin, 1.0) * 0.14
+    ax.set_xlim(vmin - pad - 3.0, vmax + pad + 2.0)
     for yi, v in zip(y, plot["Improvement_Pct"]):
         ha = "left" if v >= 0 else "right"
-        offset = 0.4 if v >= 0 else -0.4
-        ax.text(v + offset, yi, f"{v:.2f}%", va="center", ha=ha, fontsize=8)
-    # Legend proxy
-    ax.plot([], [], color=COLOR_POS, lw=6, label="Hungarian better")
-    ax.plot([], [], color=COLOR_NEG, lw=6, label="Greedy better")
-    ax.legend(loc="lower right", frameon=True)
+        offset = 0.55 if v >= 0 else -0.55
+        ax.text(
+            v + offset,
+            yi,
+            f"{v:.2f}",
+            va="center",
+            ha=ha,
+            fontsize=7.5,
+            color=COLOR_MUTED,
+        )
+
+    from matplotlib.patches import Patch
+
+    ax.legend(
+        handles=[
+            Patch(facecolor=COLOR_POS, edgecolor="none", label="Hungarian better"),
+            Patch(facecolor=COLOR_NEG, edgecolor="none", label="Greedy better"),
+            Patch(facecolor="#9ca3af", edgecolor="none", label=r"Tie ($|\Delta|\leq 0.05\%$)"),
+        ],
+        loc="lower right",
+        frameon=False,
+        fontsize=8,
+    )
+    ax.text(
+        0.0,
+        -0.13,
+        r"Improvement $= (D_{\mathrm{Greedy}} - D_{\mathrm{Hungarian}}) / D_{\mathrm{Greedy}} \times 100$",
+        transform=ax.transAxes,
+        fontsize=7.5,
+        color=COLOR_MUTED,
+        ha="left",
+        va="top",
+    )
     save_fig(fig, OUT / "figures" / "Fig03_hungarian_improvement")
 
 
 def fig4_distributions(unit: pd.DataFrame) -> None:
-    """Box + strip of log10 Mahalanobis by method × task type."""
+    """Violin + box + strip of log10 Mahalanobis by method × task type."""
     long = unit.melt(
         id_vars=["Dataset", "Type", "Generator"],
         value_vars=["Greedy", "Hungarian"],
@@ -387,9 +594,13 @@ def fig4_distributions(unit: pd.DataFrame) -> None:
     long = long[long["Distance"] > 0].copy()
     long["log10_Distance"] = np.log10(long["Distance"])
 
-    fig, axes = plt.subplots(1, 2, figsize=(10.0, 4.8), sharey=True)
-    for ax, typ in zip(axes, ["Classification", "Regression"]):
+    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.6), sharey=True)
+    palette = {"Greedy": "#56B4E9", "Hungarian": "#E69F00"}  # light Okabe–Ito fills
+    for ax, typ, letter in zip(axes, ["Classification", "Regression"], ("a", "b")):
         sub = long[long["Type"] == typ]
+        n_units = sub["Dataset"].astype(str).str.cat(sub["Generator"].astype(str)).nunique()
+        # n paired units = rows / 2 methods
+        n_units = len(sub) // 2
         sns.violinplot(
             data=sub,
             x="Method",
@@ -397,78 +608,115 @@ def fig4_distributions(unit: pd.DataFrame) -> None:
             hue="Method",
             order=["Greedy", "Hungarian"],
             hue_order=["Greedy", "Hungarian"],
-            palette={"Greedy": COLOR_GREEDY, "Hungarian": COLOR_HUNG},
+            palette=palette,
             inner=None,
             cut=0,
             ax=ax,
-            alpha=0.35,
+            saturation=0.85,
+            linewidth=0.8,
             legend=False,
+            zorder=1,
         )
+        for coll in ax.collections:
+            coll.set_alpha(0.40)
         sns.boxplot(
             data=sub,
             x="Method",
             y="log10_Distance",
             order=["Greedy", "Hungarian"],
-            width=0.28,
+            width=0.22,
             showfliers=False,
-            boxprops={"facecolor": "white", "alpha": 0.9},
+            boxprops={"facecolor": "white", "edgecolor": COLOR_INK, "linewidth": 0.9, "alpha": 0.95},
+            whiskerprops={"color": COLOR_INK, "linewidth": 0.9},
+            capprops={"color": COLOR_INK, "linewidth": 0.9},
+            medianprops={"color": COLOR_INK, "linewidth": 1.2},
             ax=ax,
+            zorder=3,
         )
         sns.stripplot(
             data=sub,
             x="Method",
             y="log10_Distance",
             order=["Greedy", "Hungarian"],
-            color="#334155",
-            size=3.0,
-            alpha=0.45,
-            jitter=0.12,
+            color=COLOR_MUTED,
+            size=2.4,
+            alpha=0.35,
+            jitter=0.10,
             ax=ax,
+            zorder=2,
+            legend=False,
         )
-        ax.set_title(f"{typ} (n={len(sub)} units)")
+        ax.set_title(f"{typ}  ($n={n_units}$ units)", pad=6)
         ax.set_xlabel("")
-        ax.set_ylabel("log₁₀ Mahalanobis distance" if ax is axes[0] else "")
-        ax.grid(axis="y", alpha=0.3)
+        ax.set_ylabel(r"$\log_{10}$ Mahalanobis distance" if ax is axes[0] else "")
+        style_axes(ax, grid="y")
+        panel_label(ax, letter)
 
     fig.suptitle(
-        "Figure 4. Distribution of Mahalanobis distances across dataset×generator units",
-        y=1.02,
-        fontsize=12,
+        "Distribution of Mahalanobis distances across dataset×generator units",
+        y=1.06,
+        fontsize=10.5,
+        fontweight="bold",
     )
-    fig.tight_layout()
+    fig.tight_layout(w_pad=2.0)
     save_fig(fig, OUT / "figures" / "Fig04_distance_distributions")
 
 
 def fig5_characteristics(ds: pd.DataFrame) -> None:
     """Scatter: features vs Hungarian improvement %; size ~ samples."""
-    fig, ax = plt.subplots(figsize=(7.6, 5.6))
-    for typ, color in [("Classification", COLOR_CLS), ("Regression", COLOR_REG)]:
+    fig, ax = plt.subplots(figsize=(7.0, 5.1))
+    # Manual label offsets (points) to reduce overlap for dense clusters
+    label_offset = {
+        "AirQ.": (7, 5),
+        "MAGIC": (7, -12),
+        "Bank": (7, 5),
+        "Wine": (7, 5),
+        "Shop": (7, 5),
+        "Metro": (7, -11),
+        "Concrete": (7, 5),
+        "Energy": (-38, -11),
+        "RE": (7, 4),
+        "Forest": (-40, -11),
+        "Alzh.": (7, 5),
+        "Adult": (7, -11),
+        "Mush.": (7, 5),
+        "CDC": (7, -11),
+        "Cancer": (-48, 4),
+    }
+    for typ, color, marker in [
+        ("Classification", COLOR_CLS, "o"),
+        ("Regression", COLOR_REG, "s"),
+    ]:
         sub = ds[ds["Type"] == typ]
-        sizes = 40 + 180 * (np.log10(sub["Samples"]) - np.log10(sub["Samples"].min())) / max(
-            np.log10(sub["Samples"].max()) - np.log10(sub["Samples"].min()), 1e-9
-        )
+        log_s = np.log10(sub["Samples"].astype(float))
+        lo, hi = float(log_s.min()), float(log_s.max())
+        sizes = 55 + 220 * (log_s - lo) / max(hi - lo, 1e-9)
         ax.scatter(
             sub["Features"],
             sub["Improvement_Pct"],
             s=sizes,
             c=color,
-            alpha=0.85,
+            alpha=0.82,
             edgecolors="white",
-            linewidths=0.6,
+            linewidths=0.7,
+            marker=marker,
             label=typ,
             zorder=3,
         )
         for r in sub.itertuples():
+            xytext = label_offset.get(r.Short, (6, 4))
             ax.annotate(
-                r.Short,
+                f"{r.Short} {r.Improvement_Pct:.2f}%",
                 (r.Features, r.Improvement_Pct),
                 textcoords="offset points",
-                xytext=(5, 4),
-                fontsize=8,
-                color="#334155",
+                xytext=xytext,
+                fontsize=7.2,
+                color=COLOR_INK,
+                ha="left" if xytext[0] >= 0 else "right",
+                va="center",
+                zorder=4,
             )
 
-    # Simple trend (all datasets)
     x = ds["Features"].to_numpy(float)
     y = ds["Improvement_Pct"].to_numpy(float)
     if len(ds) >= 3 and np.nanstd(x) > 0:
@@ -477,22 +725,27 @@ def fig5_characteristics(ds: pd.DataFrame) -> None:
         ax.plot(
             xx,
             intercept + slope * xx,
-            color="#64748b",
+            color=COLOR_MUTED,
             ls="--",
-            lw=1.2,
-            label=f"Linear trend (r={r:.2f}, p={p:.3f})",
+            lw=1.1,
+            label=f"Linear trend ($r={r:.2f}$, $p={p:.3f}$)",
             zorder=2,
         )
 
-    ax.axhline(0, color="black", lw=0.9)
+    ax.axhline(0, color=COLOR_ZERO, lw=0.95, zorder=1)
     ax.set_xlabel("Number of features (excluding target)")
     ax.set_ylabel("Hungarian improvement over Greedy (%)")
     ax.set_title(
-        "Figure 5. When does Hungarian help most?\n"
-        "Improvement vs dataset dimensionality (marker size ∝ sample size)"
+        "Improvement vs dataset dimensionality\n(marker size $\\sim$ sample size)",
+        fontsize=10.5,
+        fontweight="bold",
+        pad=8,
     )
-    ax.legend(frameon=True, loc="best")
-    ax.grid(alpha=0.3)
+    ymin, ymax = float(np.nanmin(y)), float(np.nanmax(y))
+    ax.set_ylim(ymin - 3.5, ymax + 3.5)
+    ax.set_xlim(float(np.nanmin(x)) - 1.5, float(np.nanmax(x)) + 2.5)
+    style_axes(ax, grid="both")
+    ax.legend(loc="upper right", frameon=False, fontsize=8, markerscale=0.9)
     save_fig(fig, OUT / "figures" / "Fig05_improvement_vs_features")
 
 

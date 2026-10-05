@@ -164,22 +164,6 @@
     },
     {
       "dataset": "Wine",
-      "generator": "CTGAN"
-    },
-    {
-      "dataset": "Wine",
-      "generator": "CopulaGAN"
-    },
-    {
-      "dataset": "Wine",
-      "generator": "TVAE"
-    },
-    {
-      "dataset": "Wine",
-      "generator": "GaussianCopula"
-    },
-    {
-      "dataset": "Wine",
       "generator": "CTABGAN"
     },
     {
@@ -353,14 +337,6 @@
     {
       "dataset": "OnlineShop",
       "generator": "ForestDiffusion"
-    },
-    {
-      "dataset": "AirQuality",
-      "generator": "CTGAN"
-    },
-    {
-      "dataset": "AirQuality",
-      "generator": "CopulaGAN"
     },
     {
       "dataset": "AirQuality",
@@ -483,13 +459,44 @@
       "generator": "ForestDiffusion"
     }
   ],
-  "skipped": [],
+  "skipped": [
+    {
+      "dataset": "Wine",
+      "generator": "CTGAN",
+      "reason": "incomplete Mahalanobis methods available: ['Hungarian', 'One-to-One Greedy']"
+    },
+    {
+      "dataset": "Wine",
+      "generator": "CopulaGAN",
+      "reason": "incomplete Mahalanobis methods available: ['Hungarian', 'One-to-One Greedy']"
+    },
+    {
+      "dataset": "Wine",
+      "generator": "TVAE",
+      "reason": "incomplete Mahalanobis methods available: ['Hungarian', 'One-to-One Greedy']"
+    },
+    {
+      "dataset": "Wine",
+      "generator": "GaussianCopula",
+      "reason": "incomplete Mahalanobis methods available: ['Hungarian', 'One-to-One Greedy']"
+    },
+    {
+      "dataset": "AirQuality",
+      "generator": "CTGAN",
+      "reason": "incomplete Mahalanobis methods available: ['Hungarian', 'One-to-One Greedy']"
+    },
+    {
+      "dataset": "AirQuality",
+      "generator": "CopulaGAN",
+      "reason": "incomplete Mahalanobis methods available: ['Hungarian', 'One-to-One Greedy']"
+    }
+  ],
   "notes": [
     "No runtime/compute-cost fields found in extracted mapping results; runtime figures skipped.",
     "No assignment-level pair identity matrices found; agreement figure skipped."
   ],
-  "n_paired": 120,
-  "n_skipped": 0,
+  "n_paired": 114,
+  "n_skipped": 6,
   "datasets": [
     "Adult",
     "AirQuality",

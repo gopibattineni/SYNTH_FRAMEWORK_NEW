@@ -2,6 +2,10 @@
 __pycache__/
 *.py[cod]
 .venv/
+.venv_figs/
+.local_python/
+.pydeps/
+.wheels/
 venv/
 .env
 

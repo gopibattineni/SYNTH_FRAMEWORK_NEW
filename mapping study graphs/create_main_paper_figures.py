@@ -71,15 +71,35 @@ SHORT = {
     "15. Real Estate Valuation": "RealEstate",
 }
 
+# Prefer project-bundled Times/Liberation fonts when present.
+_fonts_dir = Path(__file__).resolve().parent / "fonts"
+if _fonts_dir.is_dir():
+    from matplotlib import font_manager as fm
+
+    for _ttf in _fonts_dir.glob("*.ttf"):
+        try:
+            fm.fontManager.addfont(str(_ttf))
+        except (OSError, RuntimeError, ValueError):
+            pass
+
 sns.set_theme(style="ticks", context="paper", font_scale=1.15)
 plt.rcParams.update(
     {
         "font.family": "serif",
-        "font.serif": ["Times New Roman", "Times", "Nimbus Roman", "Liberation Serif", "DejaVu Serif"],
+        "font.serif": [
+            "Times New Roman",
+            "Times",
+            "Nimbus Roman",
+            "Liberation Serif",
+            "TeX Gyre Termes",
+            "DejaVu Serif",
+        ],
         "mathtext.fontset": "stix",
         "figure.dpi": DPI,
         "savefig.dpi": DPI,
         "svg.fonttype": "none",  # keep text as text in SVG
+        "pdf.fonttype": 42,
+        "ps.fonttype": 42,
         "axes.spines.top": False,
         "axes.spines.right": False,
         "axes.titlesize": 12,

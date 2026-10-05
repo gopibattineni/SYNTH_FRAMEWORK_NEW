@@ -487,10 +487,28 @@ def extract_notebook_maha_pairs() -> pd.DataFrame:
 
 
 def setup_style() -> None:
+    fonts_dir = Path(__file__).resolve().parent / "fonts"
+    if fonts_dir.is_dir():
+        from matplotlib import font_manager as fm
+
+        for ttf in fonts_dir.glob("*.ttf"):
+            try:
+                fm.fontManager.addfont(str(ttf))
+            except (OSError, RuntimeError, ValueError):
+                pass
+
     mpl.rcParams.update(
         {
             "font.family": "serif",
-            "font.serif": ["Times New Roman", "Times", "Nimbus Roman", "DejaVu Serif"],
+            "font.serif": [
+                "Times New Roman",
+                "Times",
+                "Nimbus Roman",
+                "Liberation Serif",
+                "TeX Gyre Termes",
+                "DejaVu Serif",
+            ],
+            "mathtext.fontset": "stix",
             "font.size": 10,
             "axes.labelsize": 11,
             "axes.titlesize": 12,
@@ -502,6 +520,7 @@ def setup_style() -> None:
             "savefig.dpi": 300,
             "pdf.fonttype": 42,
             "ps.fonttype": 42,
+            "svg.fonttype": "none",
         }
     )
 
